@@ -1,10 +1,22 @@
-node {
-    try{
-        stage('Test') {
-            sh './gradlew check'
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh './gradlew build'
+            }
         }
-    finally {
-        archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-        junit 'build/reports/**/*.xml'
+        stage('Test') {
+            steps {
+                sh './gradlew check'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+            junit 'build/reports/**/*.xml'
+        }
     }
 }
